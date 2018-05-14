@@ -33,8 +33,20 @@ namespace ConsoleApplication1
             //bookDAO.GetBooksWithoutAuthors();
 
             //Task6
-            bookDAO.IncreaseCountOfEachBookByOne();
-            bookDAO.FindAll();
+            //bookDAO.IncreaseCountOfEachBookByOne();
+            //bookDAO.FindAll();
+
+            //Task7
+            //bookDAO.AddGenreFavorityToFantasyBook();
+            //bookDAO.FindAll();
+
+            //Task8
+            //bookDAO.DeleteBooksWithCountLessThanThree();
+            //bookDAO.FindAll();
+
+            //Task9
+            //bookDAO.DeleteAllBooks();
+            //bookDAO.FindAll();
             Console.ReadKey();
         }
     }

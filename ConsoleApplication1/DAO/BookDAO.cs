@@ -25,6 +25,10 @@ namespace ConsoleApplication1.DAO
         public void FindAll()
         {
             var books = bookCollection.AsQueryable<Book>().ToList();
+            if(books.Count == 0)
+            {
+                Console.WriteLine("Book collection is empty");
+            }
             foreach(var book in books)
             {
                 Console.WriteLine("id:" + book.id);
@@ -37,6 +41,13 @@ namespace ConsoleApplication1.DAO
             }
         }
 
+        //Task1
+        //Добавьте следующие книги(название, автор, количество экземпляров, жанр, год издания):
+        //Hobbit, Tolkien, 5, fantasy, 2014
+        //Lord of the rings, Tolkien, 3, fantasy, 2015
+        //Kolobok, 10, kids, 2000
+        //Repka, 11, kids, 2000
+        //Dyadya Stiopa, Mihalkov, 1, kids, 2001
         public void AddBooks()
         {
             List<Book> books = new List<Book> {
@@ -78,6 +89,12 @@ namespace ConsoleApplication1.DAO
             bookCollection.InsertMany(books);
         }
 
+        //Task2
+        //Найдите книги с количеством экземпляров больше единицы.
+        //a.Покажите в результате только название книги.
+        //b.Отсортируйте книги по названию.
+        //c.Ограничьте количество возвращаемых книг тремя.
+        //d.Подсчитайте количество таких книг.
         public void FindBooksWithCountMoreThanOne()
         {
             var books = bookCollection.AsQueryable<Book>().Where(b => b.Count > 1).OrderBy(b => b.Name).Take(3).Select(b => b.Name).ToList();
@@ -89,6 +106,8 @@ namespace ConsoleApplication1.DAO
             Console.WriteLine("Count:" + books.Count);
         }
 
+        //Task3
+        //Найдите книгу с макимальным/минимальным количеством (count).
         public void FindBooksWithMaxMinCount()
         {
             var max = bookCollection.AsQueryable<Book>().Max(b => b.Count);
@@ -124,6 +143,8 @@ namespace ConsoleApplication1.DAO
             }
         }
 
+        //Task4
+        //Найдите список авторов (каждый автор должен быть в списке один раз).
         public void FindAllAuthors()
         {
             var authors = bookCollection.AsQueryable<Book>().Where(b => !string.IsNullOrEmpty(b.Author)).Select(b => b.Author).Distinct();
@@ -136,6 +157,8 @@ namespace ConsoleApplication1.DAO
             }
         }
 
+        //Task5
+        //Выберите книги без авторов.
         public void GetBooksWithoutAuthors()
         {
             var books = bookCollection.AsQueryable<Book>().Where(b => string.IsNullOrEmpty(b.Author));
@@ -153,9 +176,35 @@ namespace ConsoleApplication1.DAO
             }
         }
 
+        //Task6
+        //Увеличьте количество экземпляров каждой книги на единицу.
         public void IncreaseCountOfEachBookByOne()
         {
-            bookCollection.UpdateMany<Book>(Builders<Book>.Filter.BitsAllSet, Builders<Book>.Update.CurrentDate(b => b.Count + 1));
+            bookCollection.UpdateMany(Builders<Book>.Filter.Empty, Builders<Book>.Update.Inc(b => b.Count, 1));
+        }
+
+        //Task7
+        //Добавьте дополнительный жанр “favority” всем книгам с жанром “fantasy” 
+        //(последующие запуски запроса не должны дублировать жанр “favority”).
+        public void AddGenreFavorityToFantasyBook()
+        {
+            bookCollection.UpdateMany(Builders<Book>.Filter.Eq<string>("Genre", "fantasy") & !Builders<Book>.Filter.Eq<string>("Genre", "favority"), Builders<Book>.Update.Set("Genre", "fantasy, favority"));
+        }
+
+        //Task8
+        //Удалите книги с количеством экземпляров меньше трех.
+        public void DeleteBooksWithCountLessThanThree()
+        {
+            var result = bookCollection.DeleteMany<Book>(b => b.Count < 3);
+            Console.WriteLine(result.DeletedCount + "books have been deleted");
+        }
+
+        //Task9
+        //Удалите все книги.
+        public void DeleteAllBooks()
+        {
+            bookCollection.Database.DropCollection("books");
+            Console.WriteLine("All books have been deleted");
         }
     }
 }
